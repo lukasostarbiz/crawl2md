@@ -16,7 +16,7 @@ class MarkdownCleaner:
         Returns:
             Cleaned markdown content
         """
-        return markdown
+        return self.remove_headers_footers_menus(markdown)
 
     def remove_headers_footers_menus(self, markdown: str) -> str:
         """Remove headers, footers, and navigation menus.
@@ -27,7 +27,18 @@ class MarkdownCleaner:
         Returns:
             Markdown with headers/footers/menus removed
         """
-        return markdown
+        first_header = markdown.find("#")
+
+        if first_header == -1:
+            content = markdown
+        else:
+            content = markdown[first_header:].lstrip()
+
+        footer_pos = content.find("* * *")
+        if footer_pos != -1:
+            content = content[:footer_pos]
+
+        return content.rstrip()
 
     def fix_code_elements(self, markdown: str) -> str:
         """Fix issues with code element rendering.
