@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: crawl2md
+Version: 0.1.0
+Summary: Crawl a website using sitemap.xml and convert pages to markdown
+Requires-Python: >=3.9
+Requires-Dist: crawl4ai>=0.7.0
+Requires-Dist: click>=8.0
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pytest-asyncio; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: mypy; extra == "dev"

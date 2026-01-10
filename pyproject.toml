@@ -1,0 +1,15 @@
+[project]
+name = "crawl2md"
+version = "0.1.0"
+description = "Crawl a website using sitemap.xml and convert pages to markdown"
+requires-python = ">=3.9"
+dependencies = [
+    "crawl4ai>=0.7.0",
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "ruff", "mypy"]
+
+[project.scripts]
+crawl2md = "crawl2md.cli:main"

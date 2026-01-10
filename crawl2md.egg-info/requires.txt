@@ -1,0 +1,8 @@
+crawl4ai>=0.7.0
+click>=8.0
+
+[dev]
+pytest
+pytest-asyncio
+ruff
+mypy
