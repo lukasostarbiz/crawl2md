@@ -97,7 +97,7 @@ crawl2md/
 
 ## Roadmap
 
-- [ ] Markdown cleaning (remove headers, footers, menus)
+- [x] Markdown cleaning (remove headers, footers, menus)
 - [ ] Fix code element rendering issues
 - [ ] Progress bar for crawling
 - [ ] Resume interrupted crawls

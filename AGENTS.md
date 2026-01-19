@@ -12,13 +12,6 @@ source .venv/bin/activate  # macOS/Linux
 pip install -e .
 ```
 
-### Recommended Tools to Add
-Add these to `pyproject.toml` for development:
-```toml
-[project.optional-dependencies]
-dev = ["pytest", "pytest-cov", "ruff", "mypy"]
-```
-
 ### Build
 ```bash
 # Install in development mode
@@ -45,13 +38,13 @@ pytest -k "test_name_pattern"
 
 ### Linting and Formatting
 ```bash
-# Run linter (if using ruff)
+# Run linter
 ruff check .
 
-# Format code (if using ruff)
+# Format code
 ruff format .
 
-# Type checking (if using mypy)
+# Type checking
 mypy .
 
 # Fix linting issues
@@ -67,7 +60,7 @@ ruff check --fix .
 ### Imports
 - Group imports: standard library, third-party, local application
 - Separate groups with blank lines
-- Use `isort` or `ruff` for automatic import sorting
+- Use `ruff` for automatic import sorting
 - Avoid `from module import *`
 
 ```python
@@ -76,9 +69,12 @@ import sys
 
 from typing import Optional
 
-import requests
+import click
 
-from crawl2md.utils import helper_func
+from crawl4ai import AsyncWebCrawler
+from crawl2md.sitemap import SitemapParser
+from crawl2md.file_handler import FileHandler
+from crawl2md.cleaner import MarkdownCleaner
 ```
 
 ### Naming Conventions
@@ -118,18 +114,17 @@ except ValueError as e:
 - Include Args, Returns, and Raises sections
 
 ```python
-def calculate_total(prices: list[float]) -> float:
-    """Calculate the sum of all prices.
+def clean(self, markdown: str, url: Optional[str] = None) -> str:
+    """Clean markdown content.
 
     Args:
-        prices: List of prices to sum.
+        markdown: Raw markdown content
+        url: Source URL (for context)
 
     Returns:
-        The total sum.
-
-    Raises:
-        ValueError: If prices list is empty.
+        Cleaned markdown content
     """
+    return self.remove_headers_footers_menus(markdown)
 ```
 
 ### Code Formatting
@@ -139,17 +134,29 @@ def calculate_total(prices: list[float]) -> float:
 - Use `with` statements for file operations
 - Add spaces around operators and after commas
 
+### Markdown Cleaning
+- `MarkdownCleaner.clean(markdown, url)` removes headers, footers, and navigation menus
+- `MarkdownCleaner.convert_links_to_relative(markdown, base_url)` converts absolute URLs to relative paths for local archive portability
+- Anchor links (`#section`) are preserved during link conversion
+- External links remain unchanged
+- Example: `https://docs.kentico.com/api` → `../api`
+
 ### Project Structure
 ```
 crawl2md/
-├── main.py           # Entry point
+├── main.py               # Entry point
 ├── crawl2md/
 │   ├── __init__.py
-│   ├── core.py
-│   └── utils/
+│   ├── cli.py           # CLI entry point
+│   ├── crawler.py       # Async crawl4ai wrapper
+│   ├── sitemap.py       # Sitemap parser
+│   ├── cleaner.py       # Markdown cleaner
+│   └── file_handler.py  # File operations
 ├── tests/
 │   ├── __init__.py
-│   └── test_core.py
+│   ├── test_crawler.py
+│   ├── test_sitemap.py
+│   └── test_file_handler.py
 └── pyproject.toml
 ```
 
