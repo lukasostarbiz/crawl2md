@@ -9,6 +9,7 @@ A Python CLI tool that crawls websites using sitemap.xml and converts pages to m
 - Converts HTML to markdown
 - Saves markdown files preserving relative path structure
 - Configurable concurrency
+- HTML preprocessing with CSS selector-based cleanup
 
 ## Installation
 
@@ -50,7 +51,36 @@ crawl2md https://example.com --output ./my-output
 
 # Adjust concurrency
 crawl2md https://example.com --concurrency 10
+
+# HTML preprocessing - remove unwanted elements before conversion
+crawl2md https://example.com --clean-selectors-file selectors.txt
 ```
+
+### HTML Preprocessing
+
+Remove navigation, footer, sidebar, and other unwanted elements before markdown conversion using CSS selectors:
+
+```bash
+# Create selectors file (one selector per line, # for comments)
+$ cat selectors.txt
+# Remove common navigation and footer elements
+nav
+footer
+header
+# Remove sidebar by class
+.sidebar
+# Remove by ID
+#nav-header
+
+# Crawl with cleanup
+crawl2md https://example.com --clean-selectors-file selectors.txt
+```
+
+Supported selectors:
+- Tags: `nav`, `footer`, `header`
+- Classes: `.sidebar`, `.menu-item`
+- IDs: `#header`, `#footer`
+- Compound: `article > .content`, `.sidebar li`
 
 ## Development
 
@@ -85,7 +115,8 @@ crawl2md/
 │   ├── cli.py           # CLI entry point
 │   ├── crawler.py       # Async crawl4ai wrapper
 │   ├── sitemap.py       # Sitemap parser
-│   ├── cleaner.py       # Markdown cleaner (placeholder)
+│   ├── html_cleaner.py  # HTML preprocessing with CSS selectors
+│   ├── cleaner.py       # Markdown cleaner
 │   └── file_handler.py  # File operations
 ├── tests/
 │   ├── test_crawler.py
@@ -97,7 +128,8 @@ crawl2md/
 
 ## Roadmap
 
-- [x] Markdown cleaning (remove headers, footers, menus)
+- [x] HTML preprocessing with CSS selector-based cleanup
+- [x] Markdown cleaning (headers, footers, menus)
 - [ ] Fix code element rendering issues
 - [ ] Progress bar for crawling
 - [ ] Resume interrupted crawls
