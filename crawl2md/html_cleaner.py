@@ -22,7 +22,8 @@ class HtmlCleaner:
         """Load selectors from a text file.
 
         Each non-empty, non-comment line is treated as a CSS selector.
-        Lines starting with # are ignored.
+        Lines starting with "# " (with space) or "--" are comments.
+        Lines starting with "#" without space (e.g., "#header") are ID selectors.
 
         Args:
             file_path: Path to the selectors file
@@ -34,7 +35,9 @@ class HtmlCleaner:
         path = Path(file_path)
         for line in path.read_text().splitlines():
             stripped = line.strip()
-            if stripped and not stripped.startswith("#"):
+            if stripped and not (
+                stripped.startswith("# ") or stripped.startswith("--")
+            ):
                 selectors.append(stripped)
         return cls(selectors=selectors)
 
