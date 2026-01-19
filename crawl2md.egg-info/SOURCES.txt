@@ -1,9 +1,11 @@
+README.md
 pyproject.toml
 crawl2md/__init__.py
 crawl2md/cleaner.py
 crawl2md/cli.py
 crawl2md/crawler.py
 crawl2md/file_handler.py
+crawl2md/html_cleaner.py
 crawl2md/sitemap.py
 crawl2md.egg-info/PKG-INFO
 crawl2md.egg-info/SOURCES.txt
