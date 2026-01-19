@@ -32,7 +32,8 @@ from crawl2md.cleaner import MarkdownCleaner
 @click.option(
     "--clean-selectors-file",
     default=None,
-    help="File with CSS selectors to remove (one per line, # for comments)",
+    help="File with HTML elements to remove (e.g., 'nav', 'footer'). "
+    "One selector per line. Lines starting with # are comments.",
 )
 def main(
     base_url: str,
