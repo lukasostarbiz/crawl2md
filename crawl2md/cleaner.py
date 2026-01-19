@@ -17,9 +17,10 @@ class MarkdownCleaner:
         Returns:
             Cleaned markdown content
         """
-        markdown = self.remove_headers_footers_menus(markdown)
-        if url:
-            markdown = self.convert_links_to_relative(markdown, url)
+        # Disabled - HTML preprocessing handles this now via --clean-selectors-file
+        # markdown = self.remove_headers_footers_menus(markdown)
+        # if url:
+        #     markdown = self.convert_links_to_relative(markdown, url)
         return markdown
 
     def remove_headers_footers_menus(self, markdown: str) -> str:

@@ -7,6 +7,7 @@ import click
 
 from crawl2md.crawler import Crawler, MAX_CONCURRENT_CRAWLS
 from crawl2md.file_handler import FileHandler
+from crawl2md.html_cleaner import HtmlCleaner
 from crawl2md.sitemap import SitemapParser
 from crawl2md.cleaner import MarkdownCleaner
 
@@ -28,7 +29,18 @@ from crawl2md.cleaner import MarkdownCleaner
     default=MAX_CONCURRENT_CRAWLS,
     help=f"Max concurrent crawls (default: {MAX_CONCURRENT_CRAWLS})",
 )
-def main(base_url: str, sitemap: Optional[str], output: str, concurrency: int) -> None:
+@click.option(
+    "--clean-selectors-file",
+    default=None,
+    help="File with CSS selectors to remove (one per line, # for comments)",
+)
+def main(
+    base_url: str,
+    sitemap: Optional[str],
+    output: str,
+    concurrency: int,
+    clean_selectors_file: Optional[str],
+) -> None:
     """Crawl a website and convert pages to markdown.
 
     Downloads all pages from a website's sitemap.xml and saves them as markdown files.
@@ -40,10 +52,15 @@ def main(base_url: str, sitemap: Optional[str], output: str, concurrency: int) -
     click.echo(f"Sitemap: {sitemap}")
     click.echo(f"Output: {output}")
     click.echo(f"Concurrency: {concurrency}")
+    if clean_selectors_file:
+        click.echo(f"Clean selectors file: {clean_selectors_file}")
     click.echo("-" * 50)
 
     sitemap_parser = SitemapParser(sitemap)
-    crawler = Crawler(max_concurrent=concurrency)
+    html_cleaner = (
+        HtmlCleaner.from_file(clean_selectors_file) if clean_selectors_file else None
+    )
+    crawler = Crawler(max_concurrent=concurrency, html_cleaner=html_cleaner)
     file_handler = FileHandler(base_url, output)
     cleaner = MarkdownCleaner()
 

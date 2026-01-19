@@ -4,7 +4,6 @@ import os
 from urllib.parse import urlparse
 
 
-
 class FileHandler:
     """Handle conversion of URLs to file paths and saving markdown files."""
 
