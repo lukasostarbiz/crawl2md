@@ -61,27 +61,31 @@ def main(
     try:
         click.echo("Fetching sitemap...")
         urls = sitemap_parser.get_urls()
-        click.echo(f"Found {len(urls)} URLs in sitemap")
+        total_urls = len(urls)
+        click.echo(f"Found {total_urls} URLs in sitemap")
         click.echo("-" * 50)
 
         click.echo("Crawling pages...")
-        results = asyncio.run(crawler.crawl_many(urls))
 
         success_count = 0
         fail_count = 0
 
-        for result in results:
-            if result["success"]:
-                markdown = result["markdown"]
-                cleaned_markdown = cleaner.clean(markdown, base_url)
-                file_handler.save_markdown(result["url"], cleaned_markdown)
-                click.echo(f"✓ {result['url']}")
-                success_count += 1
-            else:
-                click.echo(
-                    f"✗ {result['url']} - {result.get('error', 'Unknown error')}"
-                )
-                fail_count += 1
+        async def process_results():
+            nonlocal success_count, fail_count
+            async for result in crawler.crawl_many(urls):
+                if result["success"]:
+                    markdown = result["markdown"]
+                    cleaned_markdown = cleaner.clean(markdown, base_url)
+                    file_handler.save_markdown(result["url"], cleaned_markdown)
+                    click.echo(f"✓ {result['url']}")
+                    success_count += 1
+                else:
+                    click.echo(
+                        f"✗ {result['url']} - {result.get('error', 'Unknown error')}"
+                    )
+                    fail_count += 1
+
+        asyncio.run(process_results())
 
         click.echo("-" * 50)
         click.echo(f"Complete! Success: {success_count}, Failed: {fail_count}")

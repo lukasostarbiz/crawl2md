@@ -73,13 +73,10 @@ async def test_crawl_many():
         ]
 
         crawler = Crawler()
-        results = await crawler.crawl_many(urls)
+        results = [r async for r in crawler.crawl_many(urls)]
 
         assert len(results) == 3
         assert all(r["success"] for r in results)
-        assert results[0]["markdown"] == "# Page 1"
-        assert results[1]["markdown"] == "# Page 2"
-        assert results[2]["markdown"] == "# Page 3"
 
 
 def test_default_max_concurrent():

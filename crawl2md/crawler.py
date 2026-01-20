@@ -1,7 +1,7 @@
 """Crawler module using crawl4ai."""
 
 import asyncio
-from typing import List
+from typing import AsyncGenerator, List
 
 from crawl4ai import AsyncWebCrawler, CacheMode, CrawlerRunConfig
 
@@ -72,14 +72,14 @@ class Crawler:
         except Exception as e:
             return {"url": url, "markdown": None, "success": False, "error": str(e)}
 
-    async def crawl_many(self, urls: List[str]) -> List[dict]:
-        """Crawl multiple URLs concurrently.
+    async def crawl_many(self, urls: List[str]) -> AsyncGenerator[dict, None]:
+        """Crawl multiple URLs concurrently, yielding results as they complete.
 
         Args:
             urls: List of URLs to crawl
 
-        Returns:
-            List of result dictionaries
+        Yields:
+            Result dictionaries one at a time as crawls complete
         """
         semaphore = asyncio.Semaphore(self.max_concurrent)
 
@@ -88,5 +88,7 @@ class Crawler:
                 return await self.crawl_single(url)
 
         tasks = [crawl_with_limit(url) for url in urls]
-        results = await asyncio.gather(*tasks)
-        return results
+
+        for completed_task in asyncio.as_completed(tasks):
+            result = await completed_task
+            yield result
