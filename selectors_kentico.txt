@@ -1,0 +1,5 @@
+#left-sidebar.ht-layout-sidebar
+header.ht-headerbar
+footer
+#docsbotai-root
+#cookie-banner

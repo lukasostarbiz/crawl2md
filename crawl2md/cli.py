@@ -1,7 +1,7 @@
 """CLI module for crawl2md."""
 
 import asyncio
-from typing import Optional
+from urllib.parse import urlparse
 
 import click
 
@@ -13,12 +13,7 @@ from crawl2md.cleaner import MarkdownCleaner
 
 
 @click.command()
-@click.argument("base_url")
-@click.option(
-    "--sitemap",
-    default=None,
-    help="Custom sitemap URL (default: BASE_URL/sitemap.xml)",
-)
+@click.argument("sitemap_url")
 @click.option(
     "--output",
     default="./output",
@@ -36,28 +31,26 @@ from crawl2md.cleaner import MarkdownCleaner
     "One selector per line. Lines starting with # are comments.",
 )
 def main(
-    base_url: str,
-    sitemap: Optional[str],
+    sitemap_url: str,
     output: str,
     concurrency: int,
-    clean_selectors_file: Optional[str],
+    clean_selectors_file: str,
 ) -> None:
     """Crawl a website and convert pages to markdown.
 
-    Downloads all pages from a website's sitemap.xml and saves them as markdown files.
+    Downloads all pages from a sitemap.xml and saves them as markdown files.
     """
-    if not sitemap:
-        sitemap = f"{base_url.rstrip('/')}/sitemap.xml"
+    parsed_sitemap = urlparse(sitemap_url)
+    base_url = f"{parsed_sitemap.scheme}://{parsed_sitemap.netloc}"
 
-    click.echo(f"Crawling {base_url}")
-    click.echo(f"Sitemap: {sitemap}")
+    click.echo(f"Sitemap: {sitemap_url}")
     click.echo(f"Output: {output}")
     click.echo(f"Concurrency: {concurrency}")
     if clean_selectors_file:
         click.echo(f"Clean selectors file: {clean_selectors_file}")
     click.echo("-" * 50)
 
-    sitemap_parser = SitemapParser(sitemap)
+    sitemap_parser = SitemapParser(sitemap_url)
     html_cleaner = (
         HtmlCleaner.from_file(clean_selectors_file) if clean_selectors_file else None
     )
@@ -68,15 +61,6 @@ def main(
     try:
         click.echo("Fetching sitemap...")
         urls = sitemap_parser.get_urls()
-        # urls = [
-        #     "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-object-events",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-form-events",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/customization/object-types/extend-system-object-types",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/api/objectquery-api",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/reusable-field-schemas",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/management-api",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/development/routing/content-tree-based-routing/set-up-content-tree-based-routing",
-        # ]
         click.echo(f"Found {len(urls)} URLs in sitemap")
         click.echo("-" * 50)
 

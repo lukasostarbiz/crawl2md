@@ -31,11 +31,12 @@ pip install -e ".[dev]"
 ### Basic Usage
 
 ```bash
-crawl2md https://example.com
+# Pass the sitemap URL directly as the main argument
+crawl2md https://example.com/sitemap.xml
 ```
 
 This will:
-1. Fetch `https://example.com/sitemap.xml`
+1. Fetch the sitemap from `https://example.com/sitemap.xml`
 2. Extract all URLs
 3. Crawl pages concurrently (max 10 by default)
 4. Save markdown files to `./output/` preserving the website structure
@@ -60,20 +61,23 @@ header        # Site header
 **Step 2: Run the crawl with cleanup**
 
 ```bash
-crawl2md https://example.com --clean-selectors-file selectors.txt
+crawl2md https://example.com/sitemap.xml --clean-selectors-file selectors.txt
 ```
 
 ### Other Options
 
 ```bash
 # Custom output directory
-crawl2md https://example.com --output ./my-docs
-
-# Custom sitemap URL
-crawl2md https://example.com --sitemap https://example.com/custom-sitemap.xml
+crawl2md https://example.com/sitemap.xml --output ./my-docs
 
 # Adjust how many pages crawl at once
-crawl2md https://example.com --concurrency 5
+crawl2md https://example.com/sitemap.xml --concurrency 5
+
+# Combine multiple options
+crawl2md https://example.com/sitemap.xml \
+  --clean-selectors-file selectors.txt \
+  --output ./docs \
+  --concurrency 5
 ```
 
 ## Development
