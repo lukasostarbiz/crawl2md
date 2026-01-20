@@ -1,5 +1,12 @@
-#left-sidebar.ht-layout-sidebar
-header.ht-headerbar
+-- sidebars
+.ht-layout-sidebar
+
+-- header
+#ht-headerbar
+
+-- all footers, both page and article
 footer
+
+-- bullshit popups
 #docsbotai-root
 #cookie-banner

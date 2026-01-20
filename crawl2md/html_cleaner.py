@@ -36,7 +36,7 @@ class HtmlCleaner:
         for line in path.read_text().splitlines():
             stripped = line.strip()
             if stripped and not (
-                stripped.startswith("# ") or stripped.startswith("--")
+                stripped.startswith("//") or stripped.startswith("--")
             ):
                 selectors.append(stripped)
         return cls(selectors=selectors)

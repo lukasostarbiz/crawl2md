@@ -8,6 +8,8 @@ A Python CLI tool that crawls websites using sitemap.xml and converts pages to m
 - Crawls pages concurrently using crawl4ai
 - Converts HTML to markdown
 - Saves markdown files preserving relative path structure
+- Converts urls to local
+  - so that output can be used as a library
 - Configurable concurrency
 - HTML preprocessing with CSS selector-based cleanup
 
@@ -47,21 +49,19 @@ Many websites have navigation menus, footers, and sidebars that you don't want i
 
 **Step 1: Create a file called `selectors.txt`**
 
-Put this in the same folder where you'll run the command:
+Put this in the same folder where you'll run the command.
 
-```
-# Lines starting with # are comments - they get ignored
-nav           # Navigation menus
-footer        # Site footer
-header        # Site header
-.sidebar      # Sidebar content (note the dot before sidebar)
-#header       # Element with id="header" (note the # before header)
-```
+- Use standard css selector to select elements to ignore
+- lines starting with `//` or `--` are considered comments
+
+See provided `selectors_kentico.txt` for example
 
 **Step 2: Run the crawl with cleanup**
 
+- just in case, give full path to `selectors.txt` file
+
 ```bash
-crawl2md https://example.com/sitemap.xml --clean-selectors-file selectors.txt
+crawl2md https://example.com/sitemap.xml --clean-selectors-file ./selectors.txt
 ```
 
 ### Other Options
@@ -75,7 +75,7 @@ crawl2md https://example.com/sitemap.xml --concurrency 5
 
 # Combine multiple options
 crawl2md https://example.com/sitemap.xml \
-  --clean-selectors-file selectors.txt \
+  --clean-selectors-file ./selectors.txt \
   --output ./docs \
   --concurrency 5
 ```
@@ -126,6 +126,8 @@ crawl2md/
 ```
 
 ## Roadmap
+
+yeah, as if. 
 
 - [x] HTML preprocessing with CSS selector-based cleanup
 - [x] Markdown cleaning (headers, footers, menus)
