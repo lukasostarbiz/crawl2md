@@ -13,6 +13,7 @@ crawl2md.egg-info/dependency_links.txt
 crawl2md.egg-info/entry_points.txt
 crawl2md.egg-info/requires.txt
 crawl2md.egg-info/top_level.txt
+tests/test_cleaner.py
 tests/test_crawler.py
 tests/test_file_handler.py
 tests/test_sitemap.py

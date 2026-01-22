@@ -10,3 +10,7 @@ footer
 -- bullshit popups
 #docsbotai-root
 #cookie-banner
+
+-- other
+.page-metadata
+

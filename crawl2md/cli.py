@@ -60,16 +60,16 @@ def main(
 
     try:
         click.echo("Fetching sitemap...")
-        urls = sitemap_parser.get_urls()
-        # urls = [
-        #     "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-object-events",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-form-events",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/customization/object-types/extend-system-object-types",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/api/objectquery-api",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/reusable-field-schemas",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/management-api",
-        #     "https://docs.kentico.com/documentation/developers-and-admins/development/routing/content-tree-based-routing/set-up-content-tree-based-routing",
-        # ]
+        # urls = sitemap_parser.get_urls()
+        urls = [
+            "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-object-events",
+            "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-form-events",
+            "https://docs.kentico.com/documentation/developers-and-admins/customization/object-types/extend-system-object-types",
+            "https://docs.kentico.com/documentation/developers-and-admins/api/objectquery-api",
+            "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/reusable-field-schemas",
+            "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/management-api",
+            "https://docs.kentico.com/documentation/developers-and-admins/development/routing/content-tree-based-routing/set-up-content-tree-based-routing",
+        ]
         click.echo(f"Found {len(urls)} URLs in sitemap")
         click.echo("-" * 50)
 
