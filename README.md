@@ -76,10 +76,9 @@ Many websites have navigation menus, footers, and sidebars that you don't want i
 **Step 1: Create a file called `selectors.txt`**
 
 Put this in the same folder where you'll run the command.
-
-- Use standard CSS selectors to select elements to remove
-- Lines starting with `#` (with space) or `--` are comments
-- Lines starting with `#` without space are ID selectors (e.g., `#header`)
+- Use standard css selector to select elements to ignore
+- lines starting with `//` or `--` are considered comments
+- see selectors_kentico.txt for example
 
 Example `selectors.txt`:
 ```
