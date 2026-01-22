@@ -1,6 +1,7 @@
 """Markdown cleaner module."""
 
 import re
+from datetime import datetime
 from typing import Optional
 
 
@@ -22,6 +23,28 @@ class MarkdownCleaner:
         # if url:
         #     markdown = self.convert_links_to_relative(markdown, url)
         return markdown
+
+    def add_metadata(self, markdown: str, source_url: str) -> str:
+        """Prepend frontmatter metadata to markdown.
+
+        Args:
+            markdown: Markdown content
+            source_url: Original URL that was crawled
+
+        Returns:
+            Markdown with frontmatter header containing metadata
+        """
+        from datetime import datetime
+
+        scrape_date = datetime.now().strftime("%Y-%m-%d")
+
+        frontmatter = f"""---
+source: {source_url}
+scrape_date: {scrape_date}
+---
+
+"""
+        return frontmatter + markdown
 
     def remove_headers_footers_menus(self, markdown: str) -> str:
         """Remove headers, footers, and navigation menus.

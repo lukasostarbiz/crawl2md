@@ -84,7 +84,10 @@ def main(
                 if result["success"]:
                     markdown = result["markdown"]
                     cleaned_markdown = cleaner.clean(markdown, base_url)
-                    file_handler.save_markdown(result["url"], cleaned_markdown)
+                    marked_with_metadata = cleaner.add_metadata(
+                        cleaned_markdown, result["url"]
+                    )
+                    file_handler.save_markdown(result["url"], marked_with_metadata)
                     click.echo(f"✓ {result['url']}")
                     success_count += 1
                 else:
