@@ -1,12 +1,15 @@
 """Crawler module using crawl4ai."""
 
 import asyncio
+import random
 from typing import AsyncGenerator, List
 
 from crawl4ai import AsyncWebCrawler, CacheMode, CrawlerRunConfig
 
 
 MAX_CONCURRENT_CRAWLS = 10
+BATCH_MIN_DELAY = 1.0
+BATCH_MAX_DELAY = 3.0
 
 
 class Crawler:
@@ -87,8 +90,19 @@ class Crawler:
             async with semaphore:
                 return await self.crawl_single(url)
 
-        tasks = [crawl_with_limit(url) for url in urls]
+        # Process URLs in batches
+        for i in range(0, len(urls), self.max_concurrent):
+            batch = urls[i : i + self.max_concurrent]
 
-        for completed_task in asyncio.as_completed(tasks):
-            result = await completed_task
-            yield result
+            # Create tasks for this batch
+            batch_tasks = [crawl_with_limit(url) for url in batch]
+
+            # Run batch concurrently and yield results as they complete
+            for completed_task in asyncio.as_completed(batch_tasks):
+                result = await completed_task
+                yield result
+
+            # Add random delay between batches (except after last batch)
+            if i + self.max_concurrent < len(urls):
+                delay = random.uniform(BATCH_MIN_DELAY, BATCH_MAX_DELAY)
+                await asyncio.sleep(delay)
