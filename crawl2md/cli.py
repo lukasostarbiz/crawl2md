@@ -1,6 +1,7 @@
 """CLI module for crawl2md."""
 
 import asyncio
+import csv
 from urllib.parse import urlparse
 
 import click
@@ -30,11 +31,17 @@ from crawl2md.cleaner import MarkdownCleaner
     help="File with HTML elements to remove (e.g., 'nav', 'footer'). "
     "One selector per line. Lines starting with # are comments.",
 )
+@click.option(
+    "--result-file",
+    default="result.csv",
+    help="CSV file to write crawl results (default: result.csv)",
+)
 def main(
     sitemap_url: str,
     output: str,
     concurrency: int,
     clean_selectors_file: str,
+    result_file: str,
 ) -> None:
     """Crawl a website and convert pages to markdown.
 
@@ -45,6 +52,7 @@ def main(
 
     click.echo(f"Sitemap: {sitemap_url}")
     click.echo(f"Output: {output}")
+    click.echo(f"Result file: {result_file}")
     click.echo(f"Concurrency: {concurrency}")
     if clean_selectors_file:
         click.echo(f"Clean selectors file: {clean_selectors_file}")
@@ -60,16 +68,7 @@ def main(
 
     try:
         click.echo("Fetching sitemap...")
-        # urls = sitemap_parser.get_urls()
-        urls = [
-            "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-object-events",
-            "https://docs.kentico.com/documentation/developers-and-admins/customization/handle-global-events/handle-form-events",
-            "https://docs.kentico.com/documentation/developers-and-admins/customization/object-types/extend-system-object-types",
-            "https://docs.kentico.com/documentation/developers-and-admins/api/objectquery-api",
-            "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/reusable-field-schemas",
-            "https://docs.kentico.com/documentation/developers-and-admins/development/content-types/management-api",
-            "https://docs.kentico.com/documentation/developers-and-admins/development/routing/content-tree-based-routing/set-up-content-tree-based-routing",
-        ]
+        urls = sitemap_parser.get_urls()
         click.echo(f"Found {len(urls)} URLs in sitemap")
         click.echo("-" * 50)
 
@@ -80,27 +79,35 @@ def main(
 
         async def process_results():
             nonlocal success_count, fail_count
-            async for result in crawler.crawl_many(urls):
-                if result["success"]:
-                    markdown = result["markdown"]
-                    cleaned_markdown = cleaner.clean(markdown, base_url)
-                    marked_with_metadata = cleaner.add_metadata(
-                        cleaned_markdown, result["url"]
-                    )
-                    file_handler.save_markdown(result["url"], marked_with_metadata)
-                    click.echo(f"✓ {result['url']}")
-                    success_count += 1
-                else:
-                    click.echo(
-                        f"✗ {result['url']} - {result.get('error', 'Unknown error')}"
-                    )
-                    fail_count += 1
+
+            with open(result_file, "w", newline="") as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(["status", "url"])
+
+                async for result in crawler.crawl_many(urls):
+                    if result["success"]:
+                        markdown = result["markdown"]
+                        cleaned_markdown = cleaner.clean(markdown, base_url)
+                        marked_with_metadata = cleaner.add_metadata(
+                            cleaned_markdown, result["url"]
+                        )
+                        file_handler.save_markdown(result["url"], marked_with_metadata)
+                        click.echo(f"✓ {result['url']}")
+                        writer.writerow(["OK", result["url"]])
+                        success_count += 1
+                    else:
+                        click.echo(
+                            f"✗ {result['url']} - {result.get('error', 'Unknown error')}"
+                        )
+                        writer.writerow(["ERROR", result["url"]])
+                        fail_count += 1
 
         asyncio.run(process_results())
 
         click.echo("-" * 50)
         click.echo(f"Complete! Success: {success_count}, Failed: {fail_count}")
         click.echo(f"Markdown files saved to: {output}")
+        click.echo(f"Results written to: {result_file}")
 
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
